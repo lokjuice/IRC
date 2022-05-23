@@ -1,8 +1,10 @@
 NAME		=	ircserv
 
-HEADER		=	MutantStack.hpp
+HEADER		=	./inc/
 
-SRCS		=	main.cpp
+SRCS		=	src/main.cpp \
+					src/Utils/Utils.cpp \
+					src/Server/Server.cpp \
 
 OBJS		= 	$(patsubst %.cpp,%.o,$(SRCS))
 
