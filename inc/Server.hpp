@@ -1,7 +1,9 @@
-#ifndef HEAD_HPP
-# define HEAD_HPP
+#ifndef SERVER_HPP
+# define SERVER_HPP
 
 #include "GlobalLib.hpp"
+#include "Channel.hpp"
+#include "User.hpp"
 
 class User;
 
@@ -12,12 +14,13 @@ private:
 	int				_channelID;
 	int				_listenning;
 	int				_cntConnects;
-	string			_pswrd;
+	string			_password;
 
-	// vector<User>	_users;
+	vector<User>	_users;
+	vector<Channel>	_channels;
 public:
 	Server();
-	Server(int port, string pswrd);
+	Server(int port, string password);
 	~Server();
 
 	int				getID();
@@ -25,15 +28,30 @@ public:
 	int				getPort();
 	int				getListenning();
 	int				getCntConnects();
+	string			getPassword();
 
+	vector<Channel>	getVectorChannels();
+	vector<Channel>	&getVectorChannelsRef();
+	vector<User>	getVectorUsers(); 
 
+	User			getUser();
+
+	Channel			getChannel(int i);
+
+	void			setID(int i);
+	void			setChannelID(int i);
 	void			setCntConnects(int i);
 	void			setListenning(int socket);
+	void			setUsername(string username, int i);
+	void			setNick(string nick, int i);
+	void			setFlags(int i, string flag);
+	
+	void			userPushBack(User *user);
+	void			channelPushBack(Channel *channel);
 
 	void			createSocket(Server &server);
 	void			bindSocket(Server &server);
 	void			listenSocket(Server &server, struct pollfd fds[]);
-
 	void			startServ(Server &server, struct pollfd fds[]);
 	void			addConnection(int &flag, struct pollfd fds[], int &i);
 	void			allConnection(int &flag, struct pollfd fds[], int &i);

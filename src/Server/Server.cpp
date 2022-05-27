@@ -1,18 +1,33 @@
 #include "../../inc/Server.hpp"
 #include "../../inc/GlobalLib.hpp"
+#include <vector>
+#include <string>
 
-Server::Server(int port, string pswrd) : _port(port), _channelID(0), _cntConnects(0), _pswrd(pswrd){}
+Server::Server(int port, string password) : _port(port), _channelID(0), _cntConnects(0), _password(password){}
 
-int		Server::getID() { return (_id); }
-int		Server::getChannelID() { return (_channelID); }
-int		Server::getPort() { return (_port); }
-int		Server::getListenning() { return (_listenning); }
-int		Server::getCntConnects() { return (_cntConnects); }
+int				Server::getID() { return (_id); }
+int				Server::getChannelID() { return (_channelID); }
+int				Server::getPort() { return (_port); }
+int				Server::getListenning() { return (_listenning); }
+int				Server::getCntConnects() { return (_cntConnects); }
+vector<Channel>	Server::getVectorChannels() { return (_channels); }	//
+vector<Channel>	&Server::getVectorChannelsRef() { return (_channels); }	//
+vector<User>	Server::getVectorUsers() { return (_users); };
+Channel			Server::getChannel(int i) { return (_channels[i]); }
+string			Server::getPassword() { return (_password); }
 
-void	Server::setListenning(int socket) { _listenning = socket; }
-void	Server::setCntConnects(int i) { _cntConnects += i; }
-void	Server::addConnection(int i) {}; 
-void	Server::allConnection(int i) {};
+void			Server::setID(int id) { _id = id; }
+void			Server::setChannelID(int i) { _channelID = i; }
+void			Server::setListenning(int socket) { _listenning = socket; }
+void			Server::setCntConnects(int i) { _cntConnects += i; }
+void			Server::setFlags(int i, string flag) { _users[i].setFlags(flag); }
+void			Server::setUsername(string username, int i) { _users[i].setUsername(username); }
+void			Server::setNick(string nick, int i) { _users[i].setNick(nick); }
+
+void			Server::channelPushBack(Channel *channel) { _channels.push_back(*channel); }
+void			Server::userPushBack(User *user) { _users.push_back(*user); }
+
+void			Server::setUserVector(vector<User> &vect) { _users = vect; }
 
 void 	Server::createSocket(Server &server){
 	server.setListenning(socket(AF_INET, SOCK_STREAM, 0));
@@ -73,6 +88,11 @@ void	Server::startServ(Server &server, struct pollfd fds[]) {
 	}
 }
 
-
+void	Server::addConnection(int &flag, struct pollfd fds[], int &i) {
+// 	User *user = new User(fds[i].fd);
+}
+void	Server::allConnection(int &flag, struct pollfd fds[], int &i) {
+// 	User *user = new User(fds[i].fd);
+}
 
 Server::~Server(){}

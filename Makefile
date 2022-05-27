@@ -5,6 +5,7 @@ HEADER		=	./inc/
 SRCS		=	src/main.cpp \
 					src/Utils/Utils.cpp \
 					src/Server/Server.cpp \
+					src/User/User.cpp \
 
 OBJS		= 	$(patsubst %.cpp,%.o,$(SRCS))
 
