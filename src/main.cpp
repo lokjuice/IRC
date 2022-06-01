@@ -8,7 +8,6 @@ int main(int argc, char **argv) {
 	}
 
 	Server server(atoi(argv[1]), std::string(argv[2]));
-
 	struct pollfd fds[10];
 
 	server.setCntConnects(1);

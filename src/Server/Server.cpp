@@ -17,7 +17,7 @@ Channel			Server::getChannel(int i) { return (_channels[i]); }
 string			Server::getPassword() { return (_password); }
 
 void			Server::setID(int id) { _id = id; }
-void			Server::setChannelID(int i) { _channelID = i; }
+void			Server::setChannelID(int i) { _channelID += i; }
 void			Server::setListenning(int socket) { _listenning = socket; }
 void			Server::setCntConnects(int i) { _cntConnects += i; }
 void			Server::setFlags(int i, string flag) { _users[i].setFlags(flag); }
@@ -27,7 +27,7 @@ void			Server::setNick(string nick, int i) { _users[i].setNick(nick); }
 void			Server::channelPushBack(Channel *channel) { _channels.push_back(*channel); }
 void			Server::userPushBack(User *user) { _users.push_back(*user); }
 
-void			Server::setUserVector(vector<User> &vect) { _users = vect; }
+void			Server::setVectorUsers(vector<User> &vect) { _users = vect; }
 
 void 	Server::createSocket(Server &server){
 	server.setListenning(socket(AF_INET, SOCK_STREAM, 0));
@@ -66,14 +66,15 @@ void 	Server::listenSocket(Server &server, struct pollfd fds[]) {
 void	Server::startServ(Server &server, struct pollfd fds[]) {
 	int flag = 0;
 	std::cout << "Server start!\n";
-	while(1) {
-		int COUNTFD;
 
+	while(1) {
+		int fdcnt;
 		if (flag > 0) {
 			std::cout << "Exit\n";
 			exit(EXIT_SUCCESS);
 		}
-		if ((COUNTFD = poll(fds, server.getCntConnects(), -1)) == -1) {
+		std::cout << "adfasdf\n";
+		if ((fdcnt = poll(fds, server.getCntConnects(), -1)) == -1) {
 			error("Poll crash");
 		}
 		for (int i = 0; i < server.getCntConnects(); i++) {
@@ -89,10 +90,37 @@ void	Server::startServ(Server &server, struct pollfd fds[]) {
 }
 
 void	Server::addConnection(int &flag, struct pollfd fds[], int &i) {
-// 	User *user = new User(fds[i].fd);
+	User *user = new User(fds[i].fd);
+	_users.push_back(*user);
+	delete user;
+
+	flag = 0;
+	fds[getCntConnects()].fd = accept(fds[i].fd, NULL, NULL);
+	std::cout << BLUE << "NEW CONNECT" << COLOR_END << std::endl;
+	fds[getCntConnects()].events = POLLIN;
+	fds[getCntConnects()].revents = 0;
+	setCntConnects(1);
 }
 void	Server::allConnection(int &flag, struct pollfd fds[], int &i) {
-// 	User *user = new User(fds[i].fd);
+	char buf[BUFFER_SIZE];
+	int res;
+
+	flag = 0;
+	memset(buf, 0, BUFFER_SIZE);
+	res = read(fds[i].fd, buf, BUFFER_SIZE);
+	fds[i].revents = 0;
+	if (!res) {
+		std::cout << RED << " disconnected" << COLOR_END << std::endl;
+		fds[i].fd = -1;
+		_users.erase(_users.begin() + i - 1);
+		setCntConnects(-1);
+	}
+	buf[res] = 0;
+	_users[i - 1].setFd(fds[i].fd);
+	setID(i - 1);
+	// parsing need here
+
+	fds[i].revents = 0;
 }
 
 Server::~Server(){}

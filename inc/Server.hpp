@@ -45,6 +45,7 @@ public:
 	void			setUsername(string username, int i);
 	void			setNick(string nick, int i);
 	void			setFlags(int i, string flag);
+	void			setVectorUsers(vector<User> &vect);
 	
 	void			userPushBack(User *user);
 	void			channelPushBack(Channel *channel);
