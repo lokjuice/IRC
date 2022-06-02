@@ -21,8 +21,9 @@ int		User::getFlags(string input) {
 	if (strcmp(input.c_str(), "PASS") == 0){ return (_flags[0]); } 
 	if (strcmp(input.c_str(), "NICK") == 0){ return (_flags[1]); }
 	if (strcmp(input.c_str(), "USER") == 0){ return (_flags[2]); }
+	if (strcmp(input.c_str(), "ALL") == 0){ return getFlags("PASS") && getFlags("NICK") && getFlags("USER") ? 2 : 3; } // 2 - true / 3 - false
+
 	return 0;
 }
-
 
 User::~User() {  }

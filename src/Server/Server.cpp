@@ -37,7 +37,7 @@ void 	Server::createSocket(Server &server){
 }
 
 void 	Server::bindSocket(Server &server) {
-	int flag = 0;
+	int flag = 1;
 
 	if (setsockopt(server.getListenning(), SOL_SOCKET, SO_REUSEADDR, &flag, sizeof(int)) < 0) {
 		error("Setsockpt crash");
@@ -49,7 +49,7 @@ void 	Server::bindSocket(Server &server) {
 	hint.sin_addr.s_addr = htonl(INADDR_ANY);
 	inet_pton(AF_INET, "127.0.0.1", &hint.sin_addr);
 
-	if (bind(server.getListenning(), (sockaddr *)&hint, sizeof(int)) == 1) {
+	if (bind(server.getListenning(), (sockaddr *)&hint, sizeof(hint)) == -1) {
 		error("Can't bind");
 	}
 }
@@ -73,8 +73,11 @@ void	Server::startServ(Server &server, struct pollfd fds[]) {
 			std::cout << "Exit\n";
 			exit(EXIT_SUCCESS);
 		}
-		std::cout << "adfasdf\n";
-		if ((fdcnt = poll(fds, server.getCntConnects(), -1)) == -1) {
+		std::cout << server.getCntConnects() << std::endl;
+		// std::cout << fds->fd << std::endl;
+		// std::cout << fds->events << std::endl;
+		// std::cout << fds->revents << std::endl;
+		if ((fdcnt = poll(fds, server.getCntConnects(), -1)) < 0) {
 			error("Poll crash");
 		}
 		for (int i = 0; i < server.getCntConnects(); i++) {

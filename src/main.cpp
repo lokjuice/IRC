@@ -17,6 +17,10 @@ int main(int argc, char **argv) {
 	fds[0].events = POLL_IN;
 	fds[0].revents = 0;
 
+	// std::cout << fds->fd << std::endl;
+	// std::cout << fds->events << std::endl;
+	// std::cout << fds->revents << std::endl;
+
 	server.createSocket(server);
 	server.bindSocket(server);
 	server.listenSocket(server, fds);

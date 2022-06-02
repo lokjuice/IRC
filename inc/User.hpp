@@ -5,11 +5,11 @@
 
 class User {
 private:
-	int _fd;
-	string _nick;
-	string _username;
+	int		_fd;
+	string	_nick;
+	string	_username;
 
-	int _flags[3];
+	int		_flags[3];
 
 public:
 	User();
@@ -23,8 +23,10 @@ public:
 
 	int		getFd();
 	int		getFlags(string input);
-	string	getNick();
 	string	getUsername();
+	string	getNick();
+
+
 };
 
 #endif
