@@ -4,6 +4,7 @@
 #include "GlobalLib.hpp"
 #include "Channel.hpp"
 #include "User.hpp"
+#include "Command.hpp"
 
 class User;
 

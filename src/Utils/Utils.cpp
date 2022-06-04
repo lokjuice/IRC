@@ -24,6 +24,11 @@ vector<string> getParams(string msg, string &firstParam){
 	return params;
 }
 
+void SendMsgIrcSynt(int fd, string nickname, string username, string message){
+	string msgToSend = ":" + nickname + "!" + username + "@127.0.0.1 " + message + "\r\n";
+	send(fd, msgToSend.c_str(), msgToSend.length() + 1, 0);
+}
+
 void	error(string error){
 	std::cout << "Error: " << error << std::endl;
 	exit(EXIT_FAILURE);
