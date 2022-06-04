@@ -21,6 +21,8 @@ $(NAME): 		$(OBJS) $(HEADER)
 				$(CPP) $(CFLAGS) -o $(NAME) $(OBJS) 
 				@echo "\033[30;42m      Program completed      \033[0m"
 
+run:			all clean
+
 clean:
 				@${RM} $(OBJS)
 				@echo "\033[30;43m        files deleted        \033[0m"

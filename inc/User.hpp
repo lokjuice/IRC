@@ -2,6 +2,9 @@
 # define USER_HPP
 
 #include "GlobalLib.hpp"
+#include "Server.hpp"
+
+class Server;
 
 class User {
 private:
@@ -26,6 +29,10 @@ public:
 	string	getUsername();
 	string	getNick();
 
+	int		settingParams(Server &server, string msg, int i, struct pollfd fds[]);
+	int		cmdPars(Server &server, string msg, int i);
+	// int		signUp(Server &server, string msg, int i);
+	// vector<string> getParams(string msg);
 
 };
 

@@ -8,6 +8,8 @@
 #include <fcntl.h>
 #include <vector>
 #include <sstream>
+// #include <algorithm>
+// #include <cstring>
 
 using std::string;
 using std::vector;
@@ -29,6 +31,7 @@ using std::vector;
 // };
 
 
-void error(string error);
+void			error(string error);
+vector<string>	getParams(string msg, string &firstParam);
 
 #endif

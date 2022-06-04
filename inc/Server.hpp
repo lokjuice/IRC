@@ -34,7 +34,7 @@ public:
 	vector<Channel>	&getVectorChannelsRef();
 	vector<User>	getVectorUsers(); 
 
-	User			getUser();
+	User			getUser(int i);
 
 	Channel			getChannel(int i);
 

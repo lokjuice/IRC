@@ -16,6 +16,8 @@ vector<User>	Server::getVectorUsers() { return (_users); };
 Channel			Server::getChannel(int i) { return (_channels[i]); }
 string			Server::getPassword() { return (_password); }
 
+User			Server::getUser(int i) { return (_users[i]); }
+
 void			Server::setID(int id) { _id = id; }
 void			Server::setChannelID(int i) { _channelID += i; }
 void			Server::setListenning(int socket) { _listenning = socket; }
@@ -73,10 +75,6 @@ void	Server::startServ(Server &server, struct pollfd fds[]) {
 			std::cout << "Exit\n";
 			exit(EXIT_SUCCESS);
 		}
-		std::cout << server.getCntConnects() << std::endl;
-		// std::cout << fds->fd << std::endl;
-		// std::cout << fds->events << std::endl;
-		// std::cout << fds->revents << std::endl;
 		if ((fdcnt = poll(fds, server.getCntConnects(), -1)) < 0) {
 			error("Poll crash");
 		}
@@ -113,7 +111,7 @@ void	Server::allConnection(int &flag, struct pollfd fds[], int &i) {
 	res = read(fds[i].fd, buf, BUFFER_SIZE);
 	fds[i].revents = 0;
 	if (!res) {
-		std::cout << RED << " disconnected" << COLOR_END << std::endl;
+		std::cout << RED << fds[i].fd << " disconnected" << COLOR_END << std::endl;
 		fds[i].fd = -1;
 		_users.erase(_users.begin() + i - 1);
 		setCntConnects(-1);
@@ -121,7 +119,9 @@ void	Server::allConnection(int &flag, struct pollfd fds[], int &i) {
 	buf[res] = 0;
 	_users[i - 1].setFd(fds[i].fd);
 	setID(i - 1);
-	// parsing need here
+	
+	_users[i].settingParams(*this, std::string(buf), i - 1, fds);
+	// std::cout << buf;
 
 	fds[i].revents = 0;
 }
