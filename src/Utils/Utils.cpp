@@ -22,7 +22,6 @@ vector<string> getParams(string msg, string &firstParam){
 		firstParam.erase(std::remove(firstParam.begin(), firstParam.end(), '\n'), firstParam.end());
 	}
 	return params;
-	//
 }
 
 void	error(string error){

@@ -38,8 +38,6 @@ int 	User::cmdPars(Server &server, string msg, int i) {
 	string firstParam;
 	vector<string> params = getParams(msg, firstParam);
 	static int flag = 0;
-
-	std::cout << firstParam << std::endl;
 	
 	if (!flag && params.size() > 0){
 		if (params[0] == "LSPING"){
@@ -49,9 +47,28 @@ int 	User::cmdPars(Server &server, string msg, int i) {
 		++flag;
 	}
 
-	// if (server.getUser(i).getFlags("PASS") == 0 && )
+	if (server.getUser(i).getFlags("PASS") == 0 && firstParam == "PASS") {
+		server.getUser(i).validatePassword(server, msg, i);
+		return (1);
+	}
 
 	return 0;
 }
+
+void	User::validatePassword(Server &server, string msg, int i) {
+	string			noUseParam;
+	vector<string>	params = getParams(msg, noUseParam);
+
+	if (params.size() == 0) {
+		sendError(ERR_NEEDMOREPARAMS(string("PASS")));
+		return ;
+	}
+	if (params[0] == server.getPassword())
+		server.setFlags(i, "PASS");
+	else
+		sendError(ERR_PASSWDMISMATCH);
+}
+
+void	User::sendError(string err) { send(_fd, err.c_str(), err.length() + 1, 0); }
 
 User::~User() {  }
