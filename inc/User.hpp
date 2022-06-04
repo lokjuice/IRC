@@ -31,9 +31,10 @@ public:
 
 	int		settingParams(Server &server, string msg, int i, struct pollfd fds[]);
 	int		cmdPars(Server &server, string msg, int i);
+	void	validatePassword(Server &server, string msg, int i);
 	// int		signUp(Server &server, string msg, int i);
 	// vector<string> getParams(string msg);
-
+	void	sendError(string err);
 };
 
 #endif
