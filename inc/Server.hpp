@@ -60,6 +60,7 @@ public:
 
 ////////
 	void SendMsgIrcSynt(int fd, string nickname, string username, string message);
+	void			channelVectorSetNew(vector<Channel> &tmpVector);
 
 };
 

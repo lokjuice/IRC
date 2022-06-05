@@ -1,5 +1,6 @@
 #include "../inc/Channel.hpp"
 #include "./inc/Server.hpp"
+#include "./inc/Command.hpp"
 
 Channel::Channel() { }
 
@@ -57,4 +58,115 @@ void Channel::doChannelPrivmsg(int fd, string msg, string nick, string username)
         send(fd, "404 ERR_CANNOTSENDTOCHAN: \r\n", 28, 0);
             std::cout << "NOT IN THE CHANNEL!\n";
     }
+}
+
+void Command::createNewChnl(Server &server){
+    Channel *chnl = new Channel(_arguments[0], _fd);
+    int	_channelID = server.getChannelID();
+	server.channelPushBack(chnl);
+	delete chnl;
+
+    newusrConnect(server, _fd, _nick, _channelID, _arguments[0]);
+    std::cout << "NEw CHANNEL!" << _arguments[0] << " ADMIN IS " << _nick << std::endl;
+    server.setChannelID(1);
+}
+
+int checkChannelErrors(vector<string> _arguments, int _fd){
+    if(_arguments.size() == 0){
+        string err = ERR_NEEDMOREPARAMS((string)"JOIN");
+        send(_fd, err.c_str(), err.length() +1, 0);
+        return 1;
+    }
+    if(_arguments.size() > 0){
+        if(_arguments[0][0] != '#'){
+            string err = ERR_BADCHANNELKEY((string)"JOIN");
+            send(_fd, err.c_str(), err.length() + 1, 0);
+            return 1;
+        }
+    }
+}
+
+void Command::JoinCommand(Server &server){
+    int _chnlID = server.getChannelID();
+    bool chnlNameExit = false;
+    vector<Channel> tmpVector = server.getVectorChannels();
+    chnlNameExit = checkChnlNameExist(tmpVector, _arguments[0]);
+    int ifChnlError = checkChannelErrors(_arguments, _fd);
+    if (ifChnlError)
+        return ;
+    if(!chnlNameExit)
+        createNewChnl(server);
+    else{
+        for(vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
+            if((*it).ChnlName() == _arguments[0]){
+                if((*it).FdAdm()!= _fd){
+                    vector<int>::iterator it2;
+                    vector<int> tmpFd = (*it).FdVector();
+                    for(it2 = tmpFd.begin(); it2 != tmpFd.end(); it2++){
+                        if((*it2) == _fd)
+                            break;
+                    }
+                    if (it2 == tmpFd.end()){
+                        if(tmpFd.size() == 0)
+                            (*it).setFdAdmin(_fd);
+                        (*it).fdsPushBack(_fd);
+                        server.channelVectorSetNew(tmpVector);
+                        newusrConnect(server, _fd, _nick, _chnlID - 1, _arguments[0]);
+                        std::cout << "NEW MEMBER AT " << server.getChannel(_chnlID - 1).ChnlName() << " BY FD " << _fd << " " << _nick << std::endl;
+                    }
+                }
+            }
+        }
+    }
+}
+
+void    Command::PartCmd(Server &server){
+    if (_arguments.size() < 1){
+        string err = "461 *  PART :Not enough parameters\r\n";
+        send(_fd, err.c_str(), err.length() + 1, 0);
+        return ;
+    }
+    Channel tmpChannel;
+    vector<Channel> tmpVector = server.getVectorChannelsRef();
+    for(vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
+        if((*it).ChnlName() == _arguments[0]){
+            if((*it).doPartFromChnl(_fd)){ //дописать ф-ию
+                std::cout << _nick << " WAS PART FROM " << _arguments[0] << std::endl;
+                string err = "YOU WAS PART FROM " + _arguments[0] + "\r\n";
+                send(_fd, err.c_str(), err.length() + 1, 0);
+                server.channelVectorSetNew(tmpVector);
+                break;
+            }
+        }
+    }
+}
+
+bool Channel::doPartFromChnl(int fd){
+    if(checkUserInChnl(fd)){
+        if(fd == _fdAdm){
+            if(_fds.size() > 1){
+                _fdAdm = _fds[1];
+            }
+        }
+        vector<int>::iterator itb = _fds.begin();
+        vector<int>::iterator ite = _fds.end();
+        vector<int>::iterator it;
+        for (it = itb; it != ite; it++) {
+            if ((*it) == fd) {
+                _fds.erase(it);
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+void Command::KickCmd(Server &server){
+    if(_arguments.size() < 2){
+        string err - "461 *  KICK :Not enough parameters\r\n";
+        send(_fd, err.c_str(), err.length() + 1, 0);
+        return ;
+    }
+
+    vector<User>::iterator it = tmp
 }

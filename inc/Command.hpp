@@ -41,7 +41,7 @@ class Command{
     void PrivmsgCmd(Server &server);
 
     //channel cmds in bot
-
+    void createNewChnl(Server &server);
 
 
 };

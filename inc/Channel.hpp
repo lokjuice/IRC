@@ -32,5 +32,6 @@ public:
     
     
     bool            checkUserInChnl(int fd);
+    bool            doPartFromChnl(int fd);
 };
 #endif

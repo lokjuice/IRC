@@ -31,6 +31,11 @@ void			Server::userPushBack(User *user) { _users.push_back(*user); }
 
 void			Server::setVectorUsers(vector<User> &vect) { _users = vect; }
 
+////
+void			Server::channelVectorSetNew(vector<Channel> &tmpVector){ _channels = tmpVector;}
+
+////
+
 void 	Server::createSocket(Server &server){
 	server.setListenning(socket(AF_INET, SOCK_STREAM, 0));
 	if (server.getListenning() == -1){
