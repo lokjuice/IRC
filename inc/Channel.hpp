@@ -33,5 +33,7 @@ public:
     
     bool            checkUserInChnl(int fd);
     bool            doPartFromChnl(int fd);
+    void            KickCmd(Server &server);
 };
+
 #endif

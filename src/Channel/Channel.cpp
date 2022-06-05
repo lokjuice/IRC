@@ -163,10 +163,30 @@ bool Channel::doPartFromChnl(int fd){
 
 void Command::KickCmd(Server &server){
     if(_arguments.size() < 2){
-        string err - "461 *  KICK :Not enough parameters\r\n";
+        string err = "461 *  KICK :Not enough parameters\r\n";
         send(_fd, err.c_str(), err.length() + 1, 0);
         return ;
     }
 
-    vector<User>::iterator it = tmp
+    vector<User> tmpVectorOfUsers = server.getVectorUsers();
+    bool userExist = false;
+    int userFd;
+    for (vector<User>::iterator it = tmpVectorOfUsers.begin(); it != tmpVectorOfUsers.end(); it++){
+        if((*it).getNick() == _arguments[1]){
+            userExist = true;
+            userFd = (*it).getFd();
+            break;
+        }
+    }
+    if (userExist){
+        Channel tmpChannel;
+        vector<Channel> tmpVector = server.getVectorChannelsRef();
+        vector<Channel>::iterator it;
+        for(it = tmpVector.begin(); it != tmpVector.end(); it++){
+            if ((*it).ChnlName() == _arguments[0]){
+            
+            }
+
+        }
+    }
 }
