@@ -1,5 +1,8 @@
-#include "../inc/Channel.hpp"
-#include "./inc/Server.hpp"
+#include "../../inc/Channel.hpp"
+#include "../../inc/GlobalLib.hpp"
+#include "../../inc/Server.hpp"
+// #include "../../inc/Utils.hpp"
+
 
 Channel::Channel() { }
 
@@ -37,6 +40,7 @@ bool checkChnlNameExist(vector<Channel> &tmpVector, string chnlName){
         if((*it).ChnlName() == chnlName)
             return true;
     }
+	return false;
 }
 
 bool Channel::checkUserInChnl(int fd){
@@ -58,3 +62,5 @@ void Channel::doChannelPrivmsg(int fd, string msg, string nick, string username)
             std::cout << "NOT IN THE CHANNEL!\n";
     }
 }
+
+Channel::~Channel() { }

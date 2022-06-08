@@ -1,9 +1,9 @@
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
-//masha's commit
+
 #include "GlobalLib.hpp"
-#include "../inc/Command.hpp"
-#include "./inc/Server.hpp"
+// #include "Command.hpp"
+// #include "Server.hpp"
 
 class Channel {
 private:

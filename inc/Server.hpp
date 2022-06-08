@@ -58,9 +58,6 @@ public:
 	void			addConnection(int &flag, struct pollfd fds[], int &i);
 	void			allConnection(int &flag, struct pollfd fds[], int &i);
 
-////////
-	void SendMsgIrcSynt(int fd, string nickname, string username, string message);
-
 };
 
 #endif
