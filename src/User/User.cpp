@@ -1,7 +1,7 @@
 #include "../../inc/GlobalLib.hpp"
 #include "../../inc/User.hpp"
 // #include "../../inc/Command.hpp"
-#include<string> 
+#include <time.h>
 
 
 User::User() { this->_flags[0] = 0; this->_flags[1] = 0; this->_flags[2] = 0; }
@@ -29,7 +29,7 @@ int		User::getFlags(string input) {
 }
 
 void	botHelp(string msg, int fd){
-	send(fd, "BOT COMMANDS: <<HELP>> <<ONLINE>> <<>> <<>>\n", 45, 0);
+	send(fd, "BOT COMMANDS: <<HELP>> <<ONLINE>> <<TIME>> <<>>\n", 48, 0);
 }
 
 void	botOnline(string msg, int fd, Server &server) {
@@ -51,6 +51,13 @@ void	botOnline(string msg, int fd, Server &server) {
 	send(fd, finalStr.c_str(), finalStr.length() + 1, 0);
 }
 
+void	botTime(int fd) {
+	time_t timer = time(NULL);
+	string data = ctime(&timer);
+
+	send(fd, data.c_str(), data.length() + 1, 0);
+}
+
 int 	User::settingParams(Server &server, string msg, int i, struct pollfd fds[]) {
 	int checkFlags = server.getUser(i).getFlags("ALL");
 
@@ -60,8 +67,10 @@ int 	User::settingParams(Server &server, string msg, int i, struct pollfd fds[])
 	vector<User> vectorUser = server.getVectorUsers();
 	if (msg == "HELP\r\n" || msg == "HELP\n")
 		botHelp("HELP" ,server.getUser(i).getFd());
-	if (msg == "ONLINE\r\n" || msg == "ONLINE\n")
+	else if (msg == "ONLINE\r\n" || msg == "ONLINE\n")
 		botOnline("", server.getUser(i).getFd(), server);
+	else if (msg == "TIME\r\n" || msg == "TIME\n")
+		botTime(server.getUser(i).getFd());
 	// Command command(msg, server.getUser(i).getFd(), server.getUser(i).getNick(), vectorUser);
 	// return command.commandStart(server, fds);
 	return 0;
