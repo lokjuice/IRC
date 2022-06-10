@@ -32,16 +32,16 @@ class Command{
     //
     vector<User>    getVectorOfUsers();
 
-    int     commandStart(Server &server, struct pollfd fds[]);
-    void       checkCommand(Server &server, struct pollfd fds[]);
+    int		commandStart(Server &server, struct pollfd fds[]);
+    void	checkCommand(Server &server, struct pollfd fds[]);
 
-    void QuitCmd(Server &server, struct pollfd fds[]);
-    void NoticeCmd(Server server);
-    void NickCmd(Server &server);
-    void PrivmsgCmd(Server &server);
+    void	QuitCmd(Server &server, struct pollfd fds[]);
+    void	NoticeCmd(Server server);
+    void	NickCmd(Server &server);
+    void	PrivmsgCmd(Server &server);
 
     //channel cmds in bot
-
+	void	botHelp();
 
 
 };

@@ -1,5 +1,7 @@
 #include "../../inc/GlobalLib.hpp"
 #include "../../inc/User.hpp"
+// #include "../../inc/Command.hpp"
+
 
 User::User() { this->_flags[0] = 0; this->_flags[1] = 0; this->_flags[2] = 0; }
 
@@ -31,7 +33,10 @@ int 	User::settingParams(Server &server, string msg, int i, struct pollfd fds[])
 	if (checkFlags == 3)	// if flags are 0
 		return server.getUser(i).cmdPars(server, msg, i);
 
-	return (0);
+	vector<User> vectorUser = server.getVectorUsers();
+	// Command command(msg, server.getUser(i).getFd(), server.getUser(i).getNick(), vectorUser);
+	// return command.commandStart(server, fds);
+	return 0;
 }
 
 int		checkNicks(Server &server, vector<string> params, int _fd) {
