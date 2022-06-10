@@ -1,6 +1,7 @@
 #include "../../inc/GlobalLib.hpp"
 #include "../../inc/User.hpp"
 // #include "../../inc/Command.hpp"
+#include<string> 
 
 
 User::User() { this->_flags[0] = 0; this->_flags[1] = 0; this->_flags[2] = 0; }
@@ -27,6 +28,29 @@ int		User::getFlags(string input) {
 	return 0;
 }
 
+void	botHelp(string msg, int fd){
+	send(fd, "BOT COMMANDS: <<HELP>> <<ONLINE>> <<>> <<>>\n", 45, 0);
+}
+
+void	botOnline(string msg, int fd, Server &server) {
+	string finalStr;
+	std::stringstream ss;
+	
+	for(int i = 0; i < server.getCntConnects() - 1; i++) {
+		if (!server.getUser(i).getUsername().empty()) {
+			ss << "ID: ";
+			ss << server.getUser(i).getFd();
+			ss << " USER: ";
+			ss << server.getUser(i).getUsername();
+			ss << " NICK: ";
+			ss << server.getUser(i).getNick();
+			ss << "\n";
+		}
+	}
+	finalStr = ss.str();
+	send(fd, finalStr.c_str(), finalStr.length() + 1, 0);
+}
+
 int 	User::settingParams(Server &server, string msg, int i, struct pollfd fds[]) {
 	int checkFlags = server.getUser(i).getFlags("ALL");
 
@@ -34,6 +58,10 @@ int 	User::settingParams(Server &server, string msg, int i, struct pollfd fds[])
 		return server.getUser(i).cmdPars(server, msg, i);
 
 	vector<User> vectorUser = server.getVectorUsers();
+	if (msg == "HELP\r\n" || msg == "HELP\n")
+		botHelp("HELP" ,server.getUser(i).getFd());
+	if (msg == "ONLINE\r\n" || msg == "ONLINE\n")
+		botOnline("", server.getUser(i).getFd(), server);
 	// Command command(msg, server.getUser(i).getFd(), server.getUser(i).getNick(), vectorUser);
 	// return command.commandStart(server, fds);
 	return 0;
