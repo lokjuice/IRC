@@ -1,5 +1,8 @@
 #include "../../inc/GlobalLib.hpp"
 #include "../../inc/User.hpp"
+// #include "../../inc/Command.hpp"
+#include <time.h>
+
 
 User::User() { this->_flags[0] = 0; this->_flags[1] = 0; this->_flags[2] = 0; }
 
@@ -25,12 +28,145 @@ int		User::getFlags(string input) {
 	return 0;
 }
 
+// NEED TO EXPORT IN BOT.CPP ///////////////////////
+
+void	botHelp(string msg, int fd){
+	send(fd, "BOT COMMANDS: <<HELP>> <<ONLINE>> <<TIME>> <<PIZZA>>\r\n", 54, 0);
+}
+
+void	botOnline(string msg, int fd, Server &server) {
+	string finalStr;
+	std::stringstream ss;
+	
+	for(int i = 0; i < server.getCntConnects() - 1; i++) {
+		if (!server.getUser(i).getUsername().empty()) {
+			ss << "ID: ";
+			ss << server.getUser(i).getFd();
+			ss << " USER: ";
+			ss << server.getUser(i).getUsername();
+			ss << " NICK: ";
+			ss << server.getUser(i).getNick();
+			ss << "\n";
+		}
+	}
+	finalStr = ss.str();
+	send(fd, finalStr.c_str(), finalStr.length() + 1, 0);
+}
+
+void	botTime(int fd) {
+	time_t timer = time(NULL);
+	string data = ctime(&timer);
+
+	send(fd, data.c_str(), data.length() + 1, 0);
+}
+
+void	botPizza(string msg, int fd) {
+	std::stringstream ss;
+
+	ss <<   "`````````````````````_____`\r\n"<<
+"``````````````__--~~~`````~~~--__`\r\n"<<
+"```````````,/'```m#######=@##m````\\.`\r\n"<<
+"`````````/'``m###+(_)##+##+###+##m```\\`\r\n"<<
+"```````/'``##@=#+####+###+##(_)+####```\\`\r\n"<<
+"`````/'``###+#####=@###(_)##+###+#@=##```\\`\r\n"<<
+"````/``#(_)##(_)###+###+####=@(_)###+###``\\`\r\n"<<
+"```/``@=###+####+###(_)##+##+####+###+###``\\`\r\n"<<
+"``|``##+####=@###+####@=#(_)##=@##(_)#+###``|`\r\n"<<
+"`|``####(_)####+#(_)+##+###+####+##+#+@=#+#``|`\r\n"<<
+"`|``##+#+##+####+##+##+####=@#+(_)##+#+####``|`\r\n"<<
+"`|``#(_)####(_)#=@###(_)+###+##+##@=##(_)##``|`\r\n"<<
+"`|``##+#(_)#####+######=@##(_)##+###+######``|`\r\n"<<
+"``|``##+####+####(_)+####+#+##@=#(_)##=@##``|`\r\n"<<
+"```\\``#@=##+#(_)#####+#(_)###+##+##+#####``/`\r\n"<<
+"````\\``##(_)###=@#(_)#+#+##(_)#+#(_)#@=#``/`\r\n"<<
+"`````\\.`~###+#####+#+#=@##+##@=##+##+##`,/`\r\n"<<
+"```````\\.`~+##(_)#####+#(_)##+#(_)+##`,/`\r\n"<<
+"`````````\\_`~##+#=@#(_)##+##(_)##~``,/`\r\n"<<
+"````````````\\__~~~+####+#####~``__/'`\r\n"<<
+"````````````````~--.._____,,--~'`\r\n";
+	string finalStr = ss.str();
+	send(fd, finalStr.c_str(), finalStr.length() + 1, 0);
+}
+
+////////////////////////////////////////////////////
+
 int 	User::settingParams(Server &server, string msg, int i, struct pollfd fds[]) {
 	int checkFlags = server.getUser(i).getFlags("ALL");
 
 	if (checkFlags == 3)	// if flags are 0
 		return server.getUser(i).cmdPars(server, msg, i);
 
+	vector<User> vectorUser = server.getVectorUsers();
+
+	// NEED TO EXPORT IN BOT.CPP ///////////////////////
+
+	if (msg == "HELP\r\n" || msg == "HELP\n")
+		botHelp("HELP" ,server.getUser(i).getFd());
+	else if (msg == "ONLINE\r\n" || msg == "ONLINE\n")
+		botOnline("", server.getUser(i).getFd(), server);
+	else if (msg == "TIME\r\n" || msg == "TIME\n")
+		botTime(server.getUser(i).getFd());
+	else if (msg == "PIZZA\r\n" || msg == "PIZZA\n")
+		botPizza(msg, server.getUser(i).getFd());
+	////////////////////////////////////////////////////
+
+	// Command command(msg, server.getUser(i).getFd(), server.getUser(i).getNick(), vectorUser);
+	// return command.commandStart(server, fds);
+	return 0;
+}
+
+int		checkNicks(Server &server, vector<string> params, int _fd) {
+	string newNick = params[0];
+	vector<User> tmpVector = server.getVectorUsers();
+
+	if (newNick.length() <= 0 || newNick.length() >= 9) {
+		string err = ERR_ERRONEUSNICKNAME(newNick);
+		send(_fd, err.c_str(), err.length() + 1, 0);
+	}
+	for (vector<User>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++) {
+		if ((*it).getNick() == newNick) {
+			string el = ERR_NICKNAMEINUSE(newNick);
+			send(_fd, el.c_str(), el.length() + 1, 0);
+			return(1);
+		}
+	}
+	return (0);
+}
+
+int		User::nickPars(Server &server, string msg, int i) {
+	string noUseParam;
+	vector<string> params = getParams(msg, noUseParam);
+	
+	if (params.size() == 0){
+		sendError(ERR_NEEDMOREPARAMS(string("NICK")));
+		return (1);
+	}
+	if (checkNicks(server, params, _fd))
+		return 1;
+
+	server.setNick(params[0], i);
+	server.setFlags(i, "NICK");
+	if (GET_USER_PASSED) {
+		send(_fd, NEW_USER(_nick, _username).c_str(), NEW_USER(_nick, _username).length() + 1, 0);
+		SEND_ABOUT_NEW_USER;
+	}
+	return (0);
+}
+
+int		User::userPars(Server &server, string msg, int i) {
+	string noUseParam;
+	vector<string> params = getParams(msg, noUseParam);
+	
+	if (params.size() == 0){
+		sendError(ERR_NEEDMOREPARAMS(string("NICK")));
+		return (1);
+	}
+	server.setUsername(params[0], i);
+	server.setFlags(i, "USER");
+	if (GET_NICK_PASSED) {
+		send(_fd, NEW_USER(_nick, _username).c_str(), NEW_USER(_nick, _username).length() + 1, 0);
+		SEND_ABOUT_NEW_USER;
+	}
 	return (0);
 }
 
@@ -50,6 +186,21 @@ int 	User::cmdPars(Server &server, string msg, int i) {
 	if (server.getUser(i).getFlags("PASS") == 0 && firstParam == "PASS") {
 		server.getUser(i).validatePassword(server, msg, i);
 		return (1);
+	}
+	else if (server.getUser(i).getFlags("PASS") == 0 && firstParam != "PASS") {
+		sendError(ERR_NOTREGISTERED);
+		return (1);
+	}
+
+	if (!(server.getUser(i).getFlags("USER") && server.getUser(i).getFlags("NICK"))){
+		if (firstParam == "NICK\n" || firstParam == "NICK")
+			return (server.getUser(i).nickPars(server, msg, i));
+		else if (firstParam == "USER\n" || firstParam == "USER")
+			return (server.getUser(i).userPars(server, msg, i));
+		else {
+			sendError(ERR_NOTREGISTERED);
+			return (1);
+		}
 	}
 
 	return 0;

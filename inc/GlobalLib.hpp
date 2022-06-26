@@ -19,6 +19,7 @@ using std::vector;
 #define GREEN "\033[32m"
 #define YELLOW "\033[33m"
 #define BLUE "\033[34m"
+#define WHITE "\033[1;37m"
 #define COLOR_END "\033[0m"
 
 #define BUFFER_SIZE 4096
@@ -45,7 +46,7 @@ using std::vector;
 #define NEW_USER(nickname, username) ("001 * Welcome to the Internet Relay Network " + nickname + "!" + username +"@127.0.0.1\r\n")
 #define GET_USER_PASSED server.getUser(i).getFlags("USER")
 #define GET_NICK_PASSED server.getUser(i).getFlags("NICK")
-#define SEND_ABOUT_NEW_USER std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(i).getNickname() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(i).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(i).getFd() << "]" << NORMAL << std::endl;
+#define SEND_ABOUT_NEW_USER std::cout << WHITE << "NEW USER! NICKNAME: " << BLUE << "[" << server.getUser(i).getNick() << "]" << WHITE << " USERNAME: "<< BLUE << "[" << server.getUser(i).getUsername() << "]" << WHITE << " FD " << BLUE << "[" << server.getUser(i).getFd() << "]" << COLOR_END << std::endl;
 
 // class Span
 // {
@@ -55,5 +56,6 @@ using std::vector;
 
 void			error(string error);
 vector<string>	getParams(string msg, string &firstParam);
+void SendMsgIrcSynt(int fd, string nickname, string username, string message);
 
 #endif

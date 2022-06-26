@@ -1,4 +1,4 @@
-#include "../inc/Command.hpp"
+#include "../../inc/Command.hpp"
 
 Command::Command(){}
 
@@ -31,6 +31,7 @@ int Command::commandStart(Server &server, struct pollfd fds[]){
 		checkCommand(server, fds);
 		return(1);
 	}
+	return (0);
 }
 
 void Command::checkCommand(Server &server, struct pollfd fds[]){
@@ -113,12 +114,13 @@ void Command::PrivmsgCmd(Server &server){
 	}
 
 	if (usrExist)
-		SendMessageIrcSyntax(fdToParam, _nick, _usrname, _msg);//дописан в utils
+		SendMsgIrcSynt(fdToParam, _nick, _usrname, _msg);//дописан в utils
 	else if (chnlExist) 
-		tmpChnl.ChannelPrivmsg(_fd, _msg, _nick, _usrname); //дописать Channel
+		tmpChnl.doChannelPrivmsg(_fd, _msg, _nick, _usrname); //дописать Channel
 	else {
 		send(_fd, ERR_NORECIPIENT(string("PRIVMSG")).c_str(), ERR_NORECIPIENT(string("PRIVMSG")).length() + 1, 0);
 		return ;
 	}
 }
+
 Command::~Command(){ }
