@@ -2,8 +2,8 @@
 #include "../../inc/GlobalLib.hpp"
 #include "../../inc/Server.hpp"
 // #include "../../inc/Utils.hpp"
-#include "../inc/Channel.hpp"
-#include "../inc/Command.hpp"
+#include "../../inc/Channel.hpp"
+#include "../../inc/Command.hpp"
 
 Channel::Channel() { }
 

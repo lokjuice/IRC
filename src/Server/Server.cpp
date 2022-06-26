@@ -10,7 +10,7 @@ int				Server::getChannelID() { return (_channelID); }
 int				Server::getPort() { return (_port); }
 int				Server::getListenning() { return (_listenning); }
 int				Server::getCntConnects() { return (_cntConnects); }
-vector<Channel>	Server::getVectorChannels() { return (_channels); }	//
+vector<Channel>	Server::getVectorOfChannels() { return (_channels); }	//
 vector<Channel>	&Server::getVectorChannelsRef() { return (_channels); }	//
 vector<User>	Server::getVectorUsers() { return (_users); };
 Channel			Server::getChannel(int i) { return (_channels[i]); }

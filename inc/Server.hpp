@@ -31,7 +31,7 @@ public:
 	int				getCntConnects();
 	string			getPassword();
 
-	vector<Channel>	getVectorChannels();
+	vector<Channel>	getVectorOfChannels();
 	vector<Channel>	&getVectorChannelsRef();
 	vector<User>	getVectorUsers(); 
 
