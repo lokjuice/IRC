@@ -7,7 +7,7 @@
 
 class Channel {
 private:
-    string  _chnlName;
+    string  _channelName;
     vector<int> _fds;
     int        _fdAdmin;
 
@@ -22,6 +22,11 @@ public:
     vector<int> FdVector();
     int         FdAdmin();
 
+    //getters
+    vector<int>		getFdVector();
+    int				getFdAdmin();
+    string			getChannelName();
+
     //setters
     void			doChannelPrivmsg(int fd, string msg, string nick, string username);
     void            fdsPushBack(int fd);
@@ -32,5 +37,19 @@ public:
     
     
     bool            checkUserInChnl(int fd);
+
+    //funcs
+    void	NewUserConnect(Server &server, int fd, string nickname, int id, string channelName);
+    bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName);
+    bool    checkUserInChannel(int fd);
+    void	doChannelPrivmsg(int fd, string message, string nickname, string username);
+    void	createNewChannel(Server &server);
+    int     checkChannelErrors(vector<string> _arguments, int _fd);
+    void	doJoinCommand(Server &server);
+    void	doPartCommand(Server &server);
+    bool    doPartFromChannel(int fd);
+    void    doKickCommand(Server &server);
+    bool    doKickFromChannel(int fd, int userFd, string userName);
+    void    printFds();
 };
 #endif

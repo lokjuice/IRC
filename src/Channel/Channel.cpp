@@ -16,7 +16,7 @@ string				Channel::getChannelName(){ return(_channelName); }
 
 // SETTERS
 void				Channel::fdsPushBack(int fd) { _fds.push_back(fd); }
-void				Channel::setChannelName(string channelName) { _channelName = channelName; }
+void				Channel::setChnlName(string chnlName) { _channelName = chnlName; }
 void				Channel::setFdVector(vector<int> &fds) { _fds = fds; }
 void				Channel::setFdAdmin(int fd) { _fdAdmin = fd; }
 void				Channel::setNewVector(vector<int> &newVector) { _fds = newVector; }
