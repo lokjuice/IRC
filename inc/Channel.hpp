@@ -9,7 +9,7 @@ class Channel {
 private:
     string  _chnlName;
     vector<int> _fds;
-    int        _fdAdm;
+    int        _fdAdmin;
 
 public:
 
@@ -20,7 +20,7 @@ public:
     //
     string      ChnlName();
     vector<int> FdVector();
-    int         FdAdm();
+    int         FdAdmin();
 
     //setters
     void			doChannelPrivmsg(int fd, string msg, string nick, string username);
