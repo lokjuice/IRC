@@ -22,33 +22,32 @@ Command::Command(string msg, int fd, string nick, vector<User> &users): _msg(msg
     }
 }
 
-//
 vector<User>	Command::getVectorOfUsers(){ return(_users);}
 
-int Command::commandStart(Server &server, struct pollfd fds[]){
+int Command::commandStart(Server &server, struct pollfd fds[], int i){
 	string cmds[] = {"NICK", "QUIT", "PRIVMSG", "NOTICE", "HELP", "JOIN", "PART", "KICK", "BOT"};
 	if (std::find(std::begin(cmds), std::end(cmds), _cmd) != std::end(cmds)){
-		checkCommand(server, fds);
+		checkCommand(server, fds, i);
 		return(1);
 	}
 	return (0);
 }
 
-void Command::checkCommand(Server &server, struct pollfd fds[]){
+void Command::checkCommand(Server &server, struct pollfd fds[], int i){
 	if (_cmd == "QUIT") QuitCmd(server, fds);
 	else if (_cmd == "NICK") NickCmd(server);
 	else if (_cmd == "PRIVMSG") PrivmsgCmd(server);
 	else if (_cmd == "NOTICE") NoticeCmd(server);
-	// else if (_cmd == "JOIN") JoinCmd(server);//в боте должно быть 
-	// else if (_cmd == "PART") PartCmd(server);
-	// else if (_cmd == "KICK") KickCmd(server);
 
-	// BOT
-	// if (_cmd == "BOT" && _arguments[0] == "HELP") HelpCmd();
-	// if (_cmd == "BOT" && _arguments[0] == "INFO") InfoCmd();
-	// if (_cmd == "BOT" && _arguments[0] == "SHOWUSER") ShowUserCmd();
-	// if (_cmd == "BOT" && _arguments[0] == "SHOWTIME") ShowTimeCmd();
-	// if (_cmd == "BOT" && _arguments[0] == "RANDNUMBER") RandNumCmd();
+
+	else if (_cmd == "BOT" && _arguments[0] == "HELP")
+		botHelp("HELP" ,server.getUser(i).getFd());
+	else if (_cmd == "BOT" && _arguments[0] == "ONLINE")
+		botOnline("", server.getUser(i).getFd(), server);
+	else if (_cmd == "BOT" && _arguments[0] == "TIME")
+		botTime(server.getUser(i).getFd());
+	else if (_cmd == "BOT" && _arguments[0] == "PIZZA")
+		botPizza(_arguments[0], server.getUser(i).getFd());
 }
 
 void	Command::QuitCmd(Server &server, struct pollfd fds[]){
@@ -90,7 +89,6 @@ void Command::PrivmsgCmd(Server &server){
 		return ;
 	}
 
-	//
 	bool usrExist = false;
 	int fdToParam;
 
@@ -104,7 +102,7 @@ void Command::PrivmsgCmd(Server &server){
 
 	bool chnlExist = false;
 	Channel tmpChnl;
-	vector<Channel>tmpVector = server.getVectorChannels();
+	vector<Channel>tmpVector = server.getVectorOfChannels();
 	for(vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
 		if ((*it).getChannelName() == _arguments[0]){ //в chhannel
 			chnlExist = true;

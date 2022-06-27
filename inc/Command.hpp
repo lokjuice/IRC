@@ -5,7 +5,7 @@
 #include "GlobalLib.hpp"
 #include "User.hpp"
 #include "Server.hpp"
-// #include "Channel.hpp"
+#include "Channel.hpp"
 
 class User;
 class Server;
@@ -32,17 +32,25 @@ class Command{
     //
     vector<User>    getVectorOfUsers();
 
-    int		commandStart(Server &server, struct pollfd fds[]);
-    void	checkCommand(Server &server, struct pollfd fds[]);
+    int     commandStart(Server &server, struct pollfd fds[], int i);
+    void    checkCommand(Server &server, struct pollfd fds[], int i);
 
     void	QuitCmd(Server &server, struct pollfd fds[]);
     void	NoticeCmd(Server server);
     void	NickCmd(Server &server);
     void	PrivmsgCmd(Server &server);
 
+    // void	NewUserConnect(Server &server, int fd, string nickname, int id, string channelName);
+    void	createNewChannel(Server &server);
+
+    void	doJoinCommand(Server &server);
+    void	doPartCommand(Server &server);
+    void    doKickCommand(Server &server);
+
     //channel cmds in bot
-	void	botHelp();
-
-
+    void	botHelp(string msg, int fd);
+    void	botOnline(string msg, int fd, Server &server);
+    void	botTime(int fd);
+    void	botPizza(string msg, int fd);
 };
 #endif

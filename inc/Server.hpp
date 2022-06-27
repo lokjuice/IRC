@@ -50,6 +50,9 @@ public:
 	
 	void			userPushBack(User *user);
 	void			channelPushBack(Channel *channel);
+	// void			channelSetNew(Channel &newChannel, int id);
+	void			channelVectorSetNew(vector<Channel> &tmpVector);
+	void			channelPushBackFd(int id, int fd);
 
 	void			createSocket(Server &server);
 	void			bindSocket(Server &server);

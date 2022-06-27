@@ -1,6 +1,8 @@
 #include <iostream>
 #include "../inc/GlobalLib.hpp"
 #include "../inc/Server.hpp"
+#include "../inc/Command.hpp"
+#include "../inc/Channel.hpp"
 
 int main(int argc, char **argv) {
 	if (argc != 3) {
@@ -16,10 +18,6 @@ int main(int argc, char **argv) {
 		fds[i].fd = -1;
 	fds[0].events = POLL_IN;
 	fds[0].revents = 0;
-
-	// std::cout << fds->fd << std::endl;
-	// std::cout << fds->events << std::endl;
-	// std::cout << fds->revents << std::endl;
 
 	server.createSocket(server);
 	server.bindSocket(server);

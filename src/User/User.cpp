@@ -28,68 +28,6 @@ int		User::getFlags(string input) {
 	return 0;
 }
 
-// NEED TO EXPORT IN BOT.CPP ///////////////////////
-
-void	botHelp(string msg, int fd){
-	send(fd, "BOT COMMANDS: <<HELP>> <<ONLINE>> <<TIME>> <<PIZZA>>\r\n", 54, 0);
-}
-
-void	botOnline(string msg, int fd, Server &server) {
-	string finalStr;
-	std::stringstream ss;
-	
-	for(int i = 0; i < server.getCntConnects() - 1; i++) {
-		if (!server.getUser(i).getUsername().empty()) {
-			ss << "ID: ";
-			ss << server.getUser(i).getFd();
-			ss << " USER: ";
-			ss << server.getUser(i).getUsername();
-			ss << " NICK: ";
-			ss << server.getUser(i).getNick();
-			ss << "\n";
-		}
-	}
-	finalStr = ss.str();
-	send(fd, finalStr.c_str(), finalStr.length() + 1, 0);
-}
-
-void	botTime(int fd) {
-	time_t timer = time(NULL);
-	string data = ctime(&timer);
-
-	send(fd, data.c_str(), data.length() + 1, 0);
-}
-
-void	botPizza(string msg, int fd) {
-	std::stringstream ss;
-
-	ss <<   "`````````````````````_____`\r\n"<<
-"``````````````__--~~~`````~~~--__`\r\n"<<
-"```````````,/'```m#######=@##m````\\.`\r\n"<<
-"`````````/'``m###+(_)##+##+###+##m```\\`\r\n"<<
-"```````/'``##@=#+####+###+##(_)+####```\\`\r\n"<<
-"`````/'``###+#####=@###(_)##+###+#@=##```\\`\r\n"<<
-"````/``#(_)##(_)###+###+####=@(_)###+###``\\`\r\n"<<
-"```/``@=###+####+###(_)##+##+####+###+###``\\`\r\n"<<
-"``|``##+####=@###+####@=#(_)##=@##(_)#+###``|`\r\n"<<
-"`|``####(_)####+#(_)+##+###+####+##+#+@=#+#``|`\r\n"<<
-"`|``##+#+##+####+##+##+####=@#+(_)##+#+####``|`\r\n"<<
-"`|``#(_)####(_)#=@###(_)+###+##+##@=##(_)##``|`\r\n"<<
-"`|``##+#(_)#####+######=@##(_)##+###+######``|`\r\n"<<
-"``|``##+####+####(_)+####+#+##@=#(_)##=@##``|`\r\n"<<
-"```\\``#@=##+#(_)#####+#(_)###+##+##+#####``/`\r\n"<<
-"````\\``##(_)###=@#(_)#+#+##(_)#+#(_)#@=#``/`\r\n"<<
-"`````\\.`~###+#####+#+#=@##+##@=##+##+##`,/`\r\n"<<
-"```````\\.`~+##(_)#####+#(_)##+#(_)+##`,/`\r\n"<<
-"`````````\\_`~##+#=@#(_)##+##(_)##~``,/`\r\n"<<
-"````````````\\__~~~+####+#####~``__/'`\r\n"<<
-"````````````````~--.._____,,--~'`\r\n";
-	string finalStr = ss.str();
-	send(fd, finalStr.c_str(), finalStr.length() + 1, 0);
-}
-
-////////////////////////////////////////////////////
-
 int 	User::settingParams(Server &server, string msg, int i, struct pollfd fds[]) {
 	int checkFlags = server.getUser(i).getFlags("ALL");
 
@@ -98,21 +36,8 @@ int 	User::settingParams(Server &server, string msg, int i, struct pollfd fds[])
 
 	vector<User> vectorUser = server.getVectorUsers();
 
-	// NEED TO EXPORT IN BOT.CPP ///////////////////////
-
-	if (msg == "HELP\r\n" || msg == "HELP\n")
-		botHelp("HELP" ,server.getUser(i).getFd());
-	else if (msg == "ONLINE\r\n" || msg == "ONLINE\n")
-		botOnline("", server.getUser(i).getFd(), server);
-	else if (msg == "TIME\r\n" || msg == "TIME\n")
-		botTime(server.getUser(i).getFd());
-	else if (msg == "PIZZA\r\n" || msg == "PIZZA\n")
-		botPizza(msg, server.getUser(i).getFd());
-	////////////////////////////////////////////////////
-
-	// Command command(msg, server.getUser(i).getFd(), server.getUser(i).getNick(), vectorUser);
-	// return command.commandStart(server, fds);
-	return 0;
+	Command command(msg, server.getUser(i).getFd(), server.getUser(i).getNick(), vectorUser);
+	return command.commandStart(server, fds, i);
 }
 
 int		checkNicks(Server &server, vector<string> params, int _fd) {

@@ -2,6 +2,7 @@
 #include "../../inc/GlobalLib.hpp"
 #include <vector>
 #include <string>
+#include <string.h>
 
 Server::Server(int port, string password) : _port(port), _channelID(0), _cntConnects(0), _password(password){}
 
@@ -30,6 +31,8 @@ void			Server::channelPushBack(Channel *channel) { _channels.push_back(*channel)
 void			Server::userPushBack(User *user) { _users.push_back(*user); }
 
 void			Server::setVectorUsers(vector<User> &vect) { _users = vect; }
+
+void			Server::channelVectorSetNew(vector<Channel> &tmpVector){ _channels = tmpVector;}
 
 void 	Server::createSocket(Server &server){
 	server.setListenning(socket(AF_INET, SOCK_STREAM, 0));
@@ -121,7 +124,6 @@ void	Server::allConnection(int &flag, struct pollfd fds[], int &i) {
 	setID(i - 1);
 	
 	_users[i].settingParams(*this, std::string(buf), i - 1, fds);
-	// std::cout << buf;
 
 	fds[i].revents = 0;
 }

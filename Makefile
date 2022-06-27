@@ -7,6 +7,8 @@ SRCS		=	src/main.cpp \
 					src/Server/Server.cpp \
 					src/User/User.cpp \
 					src/Channel/Channel.cpp \
+					src/Command/Command.cpp \
+					src/Bot/Bot.cpp
 
 OBJS		= 	$(patsubst %.cpp,%.o,$(SRCS))
 
