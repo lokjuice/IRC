@@ -39,16 +39,13 @@ public:
     bool            checkUserInChnl(int fd);
 
     //funcs
-    void	NewUserConnect(Server &server, int fd, string nickname, int id, string channelName);
+    // void	doJoinCommand(Server &server);
+    // void	doPartCommand(Server &server);
+    // void    doKickCommand(Server &server);
     bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName);
     bool    checkUserInChannel(int fd);
-    void	doChannelPrivmsg(int fd, string message, string nickname, string username);
-    void	createNewChannel(Server &server);
     int     checkChannelErrors(vector<string> _arguments, int _fd);
-    void	doJoinCommand(Server &server);
-    void	doPartCommand(Server &server);
     bool    doPartFromChannel(int fd);
-    void    doKickCommand(Server &server);
     bool    doKickFromChannel(int fd, int userFd, string userName);
     void    printFds();
 };

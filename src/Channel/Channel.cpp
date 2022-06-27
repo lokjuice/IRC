@@ -1,9 +1,7 @@
 #include "../../inc/Channel.hpp"
-#include "../../inc/GlobalLib.hpp"
-#include "../../inc/Server.hpp"
-// #include "../../inc/Utils.hpp"
-#include "../inc/Channel.hpp"
-#include "../inc/Command.hpp"
+#include "../../inc/Command.hpp"
+// #include "../../inc/GlobalLib.hpp"
+// #include "../../inc/Server.hpp"
 
 Channel::Channel() { }
 
@@ -69,11 +67,11 @@ void	Channel::doChannelPrivmsg(int fd, string message, string nickname, string u
 void	Command::createNewChannel(Server &server){
 	Channel *channel = new Channel(_arguments[0], _fd);
 	int	_channelID = server.getChannelID();
-	server.channelsPushBack(channel);
+	server.channelPushBack(channel);
 	delete channel;
 	
-	NewUserConnect(server, _fd, _nickname, _channelID, _arguments[0]);
-	std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nickname << std::endl;
+	NewUserConnect(server, _fd, _nick, _channelID, _arguments[0]);
+	std::cout << "NEW CHANNEL! " << _arguments[0] << " ADMIN IS " << _nick << std::endl;
 	server.setChannelID(1);
 }
 
@@ -119,8 +117,8 @@ void	Command::doJoinCommand(Server &server){
                             (*it).setFdAdmin(_fd);
                         (*it).fdsPushBack(_fd);
                         server.channelVectorSetNew(tmpVector);
-						NewUserConnect(server, _fd, _nickname, _channelID - 1, _arguments[0]);
-						std::cout << "NEW MEMBER AT " << server.getChannel(_channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nickname << std::endl;
+						NewUserConnect(server, _fd, _nick, _channelID - 1, _arguments[0]);
+						std::cout << "NEW MEMBER AT " << server.getChannel(_channelID - 1).getChannelName() << " BY FD " << _fd << " " << _nick << std::endl;
 					}
 				}
 			}
@@ -135,11 +133,11 @@ void	Command::doPartCommand(Server &server){
         return;
     }
     Channel tmpChannel;
-    vector<Channel> tmpVector = server.getVectorOfChannelsRef();
+    vector<Channel> tmpVector = server.getVectorChannelsRef();
     for (vector<Channel>::iterator it = tmpVector.begin(); it != tmpVector.end(); it++){
         if ((*it).getChannelName() == _arguments[0]){
             if((*it).doPartFromChannel(_fd)) {
-                std::cout << _nickname << " WAS PART FROM " << _arguments[0] << std::endl;
+                std::cout << _nick << " WAS PART FROM " << _arguments[0] << std::endl;
                 string err = "YOU WAS PART FROM " + _arguments[0] + "\r\n";
                 send(_fd, err.c_str(), err.length() + 1, 0);
                 server.channelVectorSetNew(tmpVector);
@@ -167,6 +165,7 @@ bool Channel::doPartFromChannel(int fd) {
     }
     return false;
 }
+
 void Command::doKickCommand(Server &server) {
 	if(_arguments.size() < 2){
         string err = "461 *  KICK :Not enough parameters\r\n";
@@ -174,11 +173,11 @@ void Command::doKickCommand(Server &server) {
 		return;
 	}
 
-	vector<User> tmpVectorOfUsers = server.getVectorOfUsers();
+	vector<User> tmpVectorOfUsers = server.getVectorUsers();
 	bool userExist = false;
 	int userFd;
 	for (vector<User>::iterator it = tmpVectorOfUsers.begin(); it != tmpVectorOfUsers.end(); it++){
-		if ((*it).getNickname() == _arguments[1]){
+		if ((*it).getNick() == _arguments[1]){
 			userExist = true;
 			userFd = (*it).getFd();
 			break;
@@ -187,7 +186,7 @@ void Command::doKickCommand(Server &server) {
 	
 	if (userExist){
 		Channel tmpChannel;
-		vector<Channel> tmpVector = server.getVectorOfChannelsRef();
+		vector<Channel> tmpVector = server.getVectorChannelsRef();
         vector<Channel>::iterator it;
 		for ( it = tmpVector.begin(); it != tmpVector.end(); it++){
 			if ((*it).getChannelName() == _arguments[0]){
