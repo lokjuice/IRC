@@ -1,7 +1,5 @@
 #include "../../inc/Channel.hpp"
 #include "../../inc/Command.hpp"
-// #include "../../inc/GlobalLib.hpp"
-// #include "../../inc/Server.hpp"
 
 Channel::Channel() { }
 
@@ -30,8 +28,6 @@ void	NewUserConnect(Server &server, int fd, string nickname, int id, string chan
 	}
 	
 	string beginMessage = string(":ircserv 331 " + nickname + " " + channelName + ": No topic is set\r\n"); // +
-	// ":KVIrc 353 " + nickname + " = " + channelName + " :@" + nickname + "\r\n"); 
-	// ":KVIrc 366 " + nickname + " " + channelName + " :End of /NAMES list\r\n");
 	send(fd, beginMessage.c_str(), beginMessage.length() + 1, 0);	
 }
 
@@ -43,7 +39,7 @@ bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName){
 	return false;
 }
 
-bool Channel::checkUserInChannel(int fd) {
+bool Channel::checkUserInChnl(int fd) {
 	for (vector<int>::iterator it = _fds.begin(); it != _fds.end(); it++){
 		if ((*it) == fd)
 			return true;
@@ -52,8 +48,7 @@ bool Channel::checkUserInChannel(int fd) {
 }
 
 void	Channel::doChannelPrivmsg(int fd, string message, string nickname, string username){
-    //printFds();
-	if (checkUserInChannel(fd)) {
+	if (checkUserInChnl(fd)) {
 		for (vector<int>::iterator it = _fds.begin(); it != _fds.end(); it++) {
 			if ((*it) != fd)
 				SendMsgIrcSynt((*it), nickname, username, message);
@@ -147,7 +142,7 @@ void	Command::doPartCommand(Server &server){
     }
 }
 bool Channel::doPartFromChannel(int fd) {
-    if(checkUserInChannel(fd)) {
+    if(checkUserInChnl(fd)) {
         if(fd == _fdAdmin) {
             if(_fds.size() > 1) {
                 _fdAdmin = _fds[1];
@@ -238,12 +233,5 @@ bool Channel::doKickFromChannel(int fd, int userFd, string userName){
 	}
 	return false;
 }
-void Channel::printFds() {
-	vector<int>::iterator itb = _fds.begin();
-	vector<int>::iterator ite = _fds.end();
-    std::cout << "Admin fd: " << _fdAdmin << "\n";
-	for (vector<int>::iterator it = itb; it != ite; it++){
-		std::cout << "fd" << (*it) << "\n";
-	}
-}
+
 Channel::~Channel() { }
