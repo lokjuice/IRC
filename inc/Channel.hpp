@@ -36,17 +36,11 @@ public:
     void            setNewVector(vector<int> &newVector);
     
     
-    bool            checkUserInChnl(int fd);
-
     //funcs
-    // void	doJoinCommand(Server &server);
-    // void	doPartCommand(Server &server);
-    // void    doKickCommand(Server &server);
     bool	checkChannelNameExist(vector<Channel> &tmpVector, string channelName);
-    bool    checkUserInChannel(int fd);
+    bool    checkUserInChnl(int fd);
     int     checkChannelErrors(vector<string> _arguments, int _fd);
     bool    doPartFromChannel(int fd);
     bool    doKickFromChannel(int fd, int userFd, string userName);
-    void    printFds();
 };
 #endif
